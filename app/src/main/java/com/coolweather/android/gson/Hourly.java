@@ -1,19 +1,18 @@
 package com.coolweather.android.gson;
 
-import com.google.gson.annotations.SerializedName;
+public class Hourly {
 
-public class Now {
+    private String cloud;
     private String cond_code;
-    public String cond_txt;
-    private String fl;
+    private String cond_txt;
     private String hum;
-    private String pcpn;
+    private String pop;
     private String pres;
-    @SerializedName("tmp")
-    public String temperature;
-    private String vis;
+    private String time;
+    private String tmp;
     private String wind_deg;
     private String wind_dir;
     private String wind_sc;
     private String wind_spd;
+
 }
