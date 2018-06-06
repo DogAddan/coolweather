@@ -1,7 +1,7 @@
 package com.coolweather.android;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
@@ -9,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -44,11 +43,11 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView degreeText;
     private TextView weatherInfoText;
     private LinearLayout forecastLayout;
-    private TextView apiText;
-    private TextView pm25Text;
-    private TextView comfortText;
-    private TextView carWashText;
-    private TextView sportText;
+    private LinearLayout suggestionLayout;
+    private TextView windddirectionText;
+    private TextView winddegText;
+    private TextView windpowerText;
+    private TextView windspeedText;
     private ImageView bingPicImg;
 
     @Override
@@ -57,6 +56,7 @@ public class WeatherActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_weather);
         //初始化各控件
@@ -66,11 +66,11 @@ public class WeatherActivity extends AppCompatActivity {
         degreeText = (TextView) findViewById(R.id.degree_text);
         weatherInfoText = (TextView) findViewById(R.id.weather_info_text);
         forecastLayout = (LinearLayout) findViewById(R.id.forecast_layout);
-        apiText = (TextView) findViewById(R.id.aqi_text);
-        pm25Text = (TextView) findViewById(R.id.pm25_text);
-        comfortText = (TextView) findViewById(R.id.comfort_text);
-        carWashText = (TextView) findViewById(R.id.car_wash_text);
-        sportText = (TextView) findViewById(R.id.sport_text);
+        suggestionLayout = (LinearLayout) findViewById(R.id.suggestion_layout);
+        windddirectionText = (TextView) findViewById(R.id.wind_direction_text);
+        winddegText = (TextView) findViewById(R.id.wind_deg_text);
+        windpowerText = (TextView) findViewById(R.id.wind_power_text);
+        windspeedText = (TextView) findViewById(R.id.wind_speed_text);
         bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
@@ -186,11 +186,16 @@ public class WeatherActivity extends AppCompatActivity {
         String updateTime = weather.update.updateTime.split(" ")[1];
         String degree = weather.now.temperature + "℃";
         String weatherInfo = weather.now.cond_txt;
+        String windDirection = weather.now.wind_direction;
+        String windDeg = weather.now.wind_deg;
+        String windPower = weather.now.wind_power;
+        String windSpeed = weather.now.wind_speed;
         titleCity.setText(cityName);
         titleUpdateTime.setText(updateTime);
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
         forecastLayout.removeAllViews();
+        suggestionLayout.removeAllViews();
         for (Forecast forecast : weather.forecastList) {
             View view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false);
             TextView dateText = (TextView) view.findViewById(R.id.date_text);
@@ -203,23 +208,47 @@ public class WeatherActivity extends AppCompatActivity {
             minText.setText(forecast.temperature_min);
             forecastLayout.addView(view);
         }
-        apiText.setText("63");
-        pm25Text.setText("28");
+        windddirectionText.setText(windDirection);
+        winddegText.setText(windDeg);
+        windpowerText.setText(windPower);
+        windspeedText.setText(windSpeed);
         for (Lifestyle lifestyle : weather.lifestyleList) {
+            String type = new String();
+            View view = LayoutInflater.from(this).inflate(R.layout.suggestion_item, suggestionLayout, false);
+            TextView lifestyleType = (TextView) view.findViewById(R.id.lifestyle_type);
+            TextView lifestyleText = (TextView) view.findViewById(R.id.lifestyle_text);
+            TextView lifestyleBrf = (TextView) view.findViewById(R.id.lifestyle_brf);
             switch (lifestyle.lifeStyleType) {
                 case "comf":
-                    String comfort = "舒适度：" + lifestyle.text;
-                    comfortText.setText(comfort);
+                    type = "舒适度";
                     break;
-                case "cw":
-                    String carWash = "洗车指数：" + lifestyle.text;
-                    carWashText.setText(carWash);
+                case "drsg":
+                    type = "穿衣指数";
+                    break;
+                case "flu":
+                    type = "感冒指数";
                     break;
                 case "sport":
-                    String sport = "运动建议：" + lifestyle.text;
-                    sportText.setText(sport);
+                    type = "运动指数";
                     break;
+                case "trav":
+                    type = "旅游指数";
+                    break;
+                case "uv":
+                    type = "紫外线指数";
+                    break;
+                case "cw":
+                    type = "洗车指数";
+                    break;
+                case "air":
+                    type = "空气污染指数";
+                    break;
+
             }
+            lifestyleType.setText(type);
+            lifestyleText.setText(lifestyle.text);
+            lifestyleBrf.setText(lifestyle.brf);
+            suggestionLayout.addView(view);
         }
         weatherLayout.setVisibility(View.VISIBLE);
     }

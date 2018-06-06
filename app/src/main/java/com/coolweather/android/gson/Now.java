@@ -12,8 +12,13 @@ public class Now {
     @SerializedName("tmp")
     public String temperature;
     private String vis;
-    private String wind_deg;
-    private String wind_dir;
-    private String wind_sc;
-    private String wind_spd;
+
+
+    public String wind_deg;
+    @SerializedName("wind_dir")
+    public String wind_direction;
+    @SerializedName("wind_sc")
+    public String wind_power;
+    @SerializedName("wind_spd")
+    public String wind_speed;
 }
